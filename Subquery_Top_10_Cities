@@ -1,0 +1,22 @@
+-- SQL Query to identify the top 10 cities that fall within the top 10 countries based on the number of customers using a subquery.
+
+SELECT cit.city
+FROM customer AS cus
+INNER JOIN address AS add ON cus.address_id = add.address_id
+INNER JOIN city AS cit ON cit.city_id = add.city_id
+INNER JOIN country AS cou ON cou.country_id = cit.country_id
+WHERE cou.country IN
+-- Subquery to identify the top 10 countries by customer count  
+( 
+      SELECT cou.country
+      FROM customer AS cus
+      INNER JOIN address AS add ON cus.address_id = add.address_id
+      INNER JOIN city AS cit ON cit.city_id = add.city_id
+      INNER JOIN country AS cou ON cou.country_id = cit.country_id
+      GROUP BY cou.country
+      ORDER BY COUNT(customer_id) DESC
+      LIMIT 10
+  )
+GROUP BY cit.city, cou.country
+ORDER BY COUNT (cusotmer_id)DESC
+LIMIT 10
